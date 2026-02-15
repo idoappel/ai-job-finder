@@ -277,7 +277,7 @@ def stats():
 
 
 @cli.command()
-@click.option('--output', default='jobs_export.csv', help='Output CSV filename')
+@click.option('--output', default='output/jobs_export.csv', help='Output CSV filename')
 @click.option('--min-score', default=0, help='Minimum relevance score')
 @click.option('--status', default=None, help='Filter by status')
 def export(output, min_score, status):

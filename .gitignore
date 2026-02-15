@@ -55,3 +55,7 @@ htmlcov/
 tmp/
 temp/
 *.tmp
+
+# Output files (exports)
+output/*.csv
+output/*.xlsx

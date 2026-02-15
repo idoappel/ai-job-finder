@@ -48,10 +48,15 @@ class Notifier:
             score = job.get('relevance_score', 0)
             company = job.get('company_name', 'Unknown Company')
 
-            print(f"{i}. [{score}/100] {job['title']}")
+            # Clean text for Windows console (remove special Unicode characters)
+            title = job['title'].encode('ascii', 'ignore').decode('ascii')
+            location = job.get('location', 'Not specified').encode('ascii', 'ignore').decode('ascii')
+            url = job.get('url', 'N/A').encode('ascii', 'ignore').decode('ascii')
+
+            print(f"{i}. [{score}/100] {title}")
             print(f"   Company: {company}")
-            print(f"   Location: {job.get('location', 'Not specified')}")
-            print(f"   URL: {job.get('url', 'N/A')}")
+            print(f"   Location: {location}")
+            print(f"   URL: {url}")
 
             # Parse AI analysis if available
             analysis = job.get('ai_analysis')

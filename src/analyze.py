@@ -151,6 +151,9 @@ Recommendations:
         description_lower = job.get('description', '').lower()
         location_lower = job.get('location', '').lower()
 
+        # Also check title for location patterns (e.g., "US - City", "UK - City")
+        title_and_location = title_lower + ' ' + location_lower
+
         score = 0
         role_type = "other"
         pros = []
@@ -173,7 +176,8 @@ Recommendations:
                 score += 10
                 pros.append("Technical/Hardware/Engineering PM focus")
 
-        elif any(keyword in title_lower for keyword in ['analyst', 'associate', 'investment', 'venture', 'vc', 'principal']):
+        elif any(keyword in title_lower for keyword in ['venture', 'vc']) or \
+             any(phrase in title_lower for phrase in ['investment analyst', 'investment associate', 'principal - investment', 'principal investor']):
             role_type = "vc"
             score += 40
             pros.append("VC role - matches target")
@@ -196,14 +200,29 @@ Recommendations:
             score += 15
             pros.append("Values technical/hardware background")
 
-        # Location match
-        preferred_locations = ['london', 'remote', 'uk', 'united kingdom', 'hybrid']
-        if any(loc in location_lower for loc in preferred_locations):
+        # Location match - STRICT: London, UK, and nearby UK cities ONLY
+        uk_locations = ['london', 'cambridge', 'bristol', 'oxford', 'manchester', 'edinburgh',
+                       'glasgow', 'birmingham', 'uk', 'united kingdom', 'remote', 'hybrid']
+
+        # Check if location is in UK/acceptable (check both title and location field)
+        is_uk_location = any(loc in title_and_location for loc in uk_locations)
+
+        # Check for REJECTED locations (non-UK) - check title and location
+        rejected_locations = ['austin', 'texas', 'us ', 'usa', 'united states', 'california', 'new york',
+                            'bengaluru', 'bangalore', 'india', 'china', 'singapore', 'taiwan', 'hsinchu',
+                            'milpitas', 'san francisco', 'seattle']
+        is_rejected = any(loc in title_and_location for loc in rejected_locations)
+
+        if is_rejected:
+            # Heavy penalty for non-UK locations
+            score = max(0, score - 50)
+            cons.append(f"Location NOT in London/UK: {job.get('location', '')}")
+        elif is_uk_location:
             score += 10
             pros.append(f"Good location: {job.get('location', '')}")
         else:
-            if location_lower:
-                cons.append(f"Location may not be ideal: {job.get('location', '')}")
+            if location_lower and location_lower != 'not specified':
+                cons.append(f"Location unclear: {job.get('location', '')}")
 
         # Company info bonus
         if company:

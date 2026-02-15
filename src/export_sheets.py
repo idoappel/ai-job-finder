@@ -8,7 +8,7 @@ from typing import List, Dict
 from pathlib import Path
 
 
-def export_to_csv(jobs: List[Dict], output_file: str = "jobs_export.csv"):
+def export_to_csv(jobs: List[Dict], output_file: str = "output/jobs_export.csv"):
     """
     Export jobs to CSV file (can be imported to Google Sheets)
 
@@ -39,6 +39,7 @@ def export_to_csv(jobs: List[Dict], output_file: str = "jobs_export.csv"):
     ]
 
     output_path = Path(output_file)
+    output_path.parent.mkdir(parents=True, exist_ok=True)  # Ensure output dir exists
 
     with open(output_path, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
