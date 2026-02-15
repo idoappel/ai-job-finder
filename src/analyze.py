@@ -157,15 +157,21 @@ Recommendations:
         cons = []
 
         # Role type detection and scoring
-        if any(keyword in title_lower for keyword in ['product manager', 'product lead', 'pm ']):
+        if any(keyword in title_lower for keyword in ['product manager', 'product lead', 'project manager', 'program manager', 'pm ', 'tpm']):
             role_type = "pm"
             score += 40
-            pros.append("Product Manager role - matches target")
 
-            # Technical PM bonus
-            if any(keyword in title_lower + description_lower for keyword in ['technical', 'hardware', 'platform', 'infrastructure']):
+            if 'product' in title_lower:
+                pros.append("Product Manager role - matches target")
+            elif 'project' in title_lower:
+                pros.append("Project Manager role - matches target")
+            elif 'program' in title_lower:
+                pros.append("Program Manager role - matches target")
+
+            # Technical PM/Project Manager bonus
+            if any(keyword in title_lower + description_lower for keyword in ['technical', 'hardware', 'platform', 'infrastructure', 'engineering']):
                 score += 10
-                pros.append("Technical/Hardware PM focus")
+                pros.append("Technical/Hardware/Engineering PM focus")
 
         elif any(keyword in title_lower for keyword in ['analyst', 'associate', 'investment', 'venture', 'vc', 'principal']):
             role_type = "vc"

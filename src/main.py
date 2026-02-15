@@ -16,6 +16,7 @@ from discover import CompanyDiscovery
 from scrape import JobScraper
 from analyze import JobAnalyzer
 from notify import Notifier
+from export_sheets import export_to_csv, print_google_sheets_instructions
 
 
 console = Console()
@@ -271,6 +272,40 @@ def stats():
     console.print(f"New Jobs: [green]{stats_data['new_jobs']}[/green]")
     console.print(f"Applied: [yellow]{stats_data['applied_jobs']}[/yellow]")
     console.print(f"Average Score: [green]{stats_data['avg_relevance_score']}/100[/green]\n")
+
+    db.close()
+
+
+@cli.command()
+@click.option('--output', default='jobs_export.csv', help='Output CSV filename')
+@click.option('--min-score', default=0, help='Minimum relevance score')
+@click.option('--status', default=None, help='Filter by status')
+def export(output, min_score, status):
+    """Export jobs to CSV for Google Sheets import"""
+    config = load_config()
+    db = JobDatabase()
+
+    jobs = db.get_jobs(status=status, min_score=min_score, limit=1000)
+
+    if not jobs:
+        console.print("[yellow]No jobs found to export[/yellow]")
+        db.close()
+        return
+
+    # Export to CSV
+    output_path = export_to_csv(jobs, output)
+
+    if output_path:
+        console.print(f"\n[green]Successfully exported {len(jobs)} jobs![/green]")
+        console.print(f"[cyan]File location: {output_path.absolute()}[/cyan]\n")
+
+        # Show import instructions
+        console.print("[bold]To import to Google Sheets:[/bold]")
+        console.print("1. Go to: [link]https://sheets.google.com[/link]")
+        console.print("2. Create new spreadsheet")
+        console.print("3. File > Import > Upload")
+        console.print(f"4. Select: {output_path.name}")
+        console.print("5. Import location: 'Replace spreadsheet'\n")
 
     db.close()
 

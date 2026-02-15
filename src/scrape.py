@@ -42,19 +42,16 @@ class JobScraper:
 
         try:
             # Use Firecrawl to scrape the page
-            result = self.client.scrape_url(
+            result = self.client.scrape(
                 url,
-                params={
-                    'formats': ['markdown', 'html'],
-                    'onlyMainContent': True
-                }
+                formats=['markdown']
             )
 
-            if not result or 'markdown' not in result:
+            if not result or not hasattr(result, 'markdown') or not result.markdown:
                 print(f"Failed to scrape {url}")
                 return []
 
-            markdown_content = result['markdown']
+            markdown_content = result.markdown
 
             # Extract job postings from markdown
             jobs = self._extract_jobs_from_markdown(markdown_content, url)
