@@ -71,7 +71,7 @@ def export_to_csv(jobs: List[Dict], output_file: str = "jobs_export.csv"):
                 'Notes': job.get('notes', '')
             })
 
-    print(f"\n✓ Exported {len(jobs)} jobs to: {output_path.absolute()}")
+    print(f"\nOK: Exported {len(jobs)} jobs to: {output_path.absolute()}")
     print(f"\nTo import to Google Sheets:")
     print(f"1. Go to: https://sheets.google.com")
     print(f"2. Create new spreadsheet or open existing")

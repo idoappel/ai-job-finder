@@ -67,54 +67,101 @@ class JobScraper:
         """
         Extract job listings from markdown content
 
-        This is a heuristic approach - looks for patterns like:
-        - Headings followed by job titles
-        - Links to job pages
-        - Location and description text
+        Handles multiple formats:
+        1. Markdown links: [Job Title\n\nDepartment Location](URL)
+        2. Headings with job titles
+        3. Greenhouse/Lever ATS systems
         """
         jobs = []
 
-        # Split by lines
-        lines = markdown.split('\n')
+        # Pattern 1: Markdown links with job info
+        # Example: [Senior ML Engineer\n\nEngineering - AI Bristol, UK](https://...)
+        link_pattern = r'\[(.*?)\]\((https?://[^\)]+)\)'
 
-        current_job = None
+        for match in re.finditer(link_pattern, markdown, re.DOTALL):
+            link_text = match.group(1)
+            url = match.group(2)
 
-        for i, line in enumerate(lines):
-            # Look for job titles (usually in headings or bold)
-            if re.match(r'^#+\s+', line) or re.match(r'^\*\*.*\*\*', line):
-                title = re.sub(r'^#+\s+|\*\*', '', line).strip()
+            # Skip navigation links, images, etc.
+            if not url or 'job' not in url.lower():
+                continue
 
-                # Check if this looks like a job title (contains role keywords)
-                if self._is_job_title(title):
-                    # Save previous job if exists
-                    if current_job:
-                        jobs.append(current_job)
+            # Parse link text - format is often: Title\n\nDepartmentLocation
+            parts = link_text.split('\\n')
+            parts = [p.strip() for p in parts if p.strip()]
 
-                    # Start new job
-                    current_job = {
-                        'title': title,
-                        'description': '',
-                        'url': base_url,  # Default to career page URL
-                        'location': ''
-                    }
+            if not parts:
+                continue
 
-            # Look for URLs (job links)
-            elif current_job and re.search(r'\[.*?\]\((https?://[^\)]+)\)', line):
-                match = re.search(r'\[.*?\]\((https?://[^\)]+)\)', line)
-                if match:
-                    current_job['url'] = match.group(1)
+            # First part is usually the title
+            title = parts[0]
 
-            # Look for location keywords
-            elif current_job and any(loc in line for loc in ['Location:', 'Remote', 'London', 'UK', 'United Kingdom']):
-                current_job['location'] = line.strip()
+            # Clean up title - remove "Multiple Vacancies Available" and other noise
+            title = re.sub(r'Multiple Vacancies Available.*$', '', title, flags=re.IGNORECASE).strip()
+            title = re.sub(r'\\n|\\r', ' ', title).strip()  # Remove literal \n characters
+            title = re.sub(r'\s+', ' ', title)  # Normalize whitespace
 
-            # Accumulate description
-            elif current_job and line.strip():
-                current_job['description'] += line + '\n'
+            # Check if this looks like a job title
+            if not self._is_job_title(title):
+                continue
 
-        # Add last job
-        if current_job:
-            jobs.append(current_job)
+            # Extract location from remaining parts
+            location = ''
+            department = ''
+
+            for part in parts[1:]:
+                # Check if part contains location keywords
+                if any(loc in part for loc in ['UK', 'US', 'United States', 'Remote', 'London', 'Cambridge', 'Bristol', 'Austin', 'Bengaluru']):
+                    location = part
+                elif 'Engineering' in part or 'Research' in part or 'Operations' in part:
+                    department = part
+
+            # If we didn't find location in parts, try to extract from full text
+            if not location:
+                location_match = re.search(r'(London|Cambridge|Bristol|Remote|UK|United States|Austin|Bengaluru|[A-Z][a-z]+,\s*[A-Z]{2})', link_text)
+                if location_match:
+                    location = location_match.group(1)
+
+            jobs.append({
+                'title': title,
+                'description': department if department else link_text[:200],
+                'url': url,
+                'location': location if location else 'Not specified'
+            })
+
+        # Pattern 2: Fallback - Look for headings that might be job titles
+        if len(jobs) == 0:
+            lines = markdown.split('\n')
+            current_job = None
+
+            for line in lines:
+                # Look for job titles in headings
+                if re.match(r'^#+\s+', line):
+                    title = re.sub(r'^#+\s+', '', line).strip()
+
+                    if self._is_job_title(title):
+                        if current_job:
+                            jobs.append(current_job)
+
+                        current_job = {
+                            'title': title,
+                            'description': '',
+                            'url': base_url,
+                            'location': ''
+                        }
+
+                # Look for URLs
+                elif current_job:
+                    url_match = re.search(r'\(https?://[^\)]+\)', line)
+                    if url_match:
+                        current_job['url'] = url_match.group(0)[1:-1]
+
+                    # Look for location
+                    if any(loc in line for loc in ['Location:', 'Remote', 'London', 'UK', 'Cambridge']):
+                        current_job['location'] = line.strip()
+
+            if current_job:
+                jobs.append(current_job)
 
         return jobs
 
