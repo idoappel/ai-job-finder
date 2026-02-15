@@ -46,7 +46,7 @@ def discover():
     """Discover companies and scrape job postings"""
     config = load_config()
 
-    console.print("\n[bold blue]🔍 AI Job Finder - Discovery Mode[/bold blue]\n")
+    console.print("\n[bold blue]AI Job Finder - Discovery Mode[/bold blue]\n")
 
     # Initialize components
     db = JobDatabase()
@@ -60,7 +60,7 @@ def discover():
     # Step 1: Discover companies
     console.print("[yellow]Step 1: Discovering companies...[/yellow]")
     companies = discovery.discover_companies()
-    console.print(f"[green]✓ Found {len(companies)} companies[/green]\n")
+    console.print(f"[green]OK: Found {len(companies)} companies[/green]\n")
 
     # Step 2: Scrape and analyze jobs
     console.print("[yellow]Step 2: Scraping job postings and analyzing matches...[/yellow]")
@@ -120,8 +120,8 @@ def discover():
 
         db.update_company_last_scraped(company_id)
 
-    console.print(f"\n[green]✓ Scraped {total_scraped} jobs from {len(companies)} companies[/green]")
-    console.print(f"[green]✓ Found {len(new_jobs)} new high-quality matches (score >= {min_score})[/green]\n")
+    console.print(f"\n[green]OK: Scraped {total_scraped} jobs from {len(companies)} companies[/green]")
+    console.print(f"[green]OK: Found {len(new_jobs)} new high-quality matches (score >= {min_score})[/green]\n")
 
     # Step 3: Show results
     if new_jobs:
@@ -249,7 +249,7 @@ def update(job_id, status, notes):
         return
 
     db.update_job_status(job_id, status, notes)
-    console.print(f"[green]✓ Updated job #{job_id} status to: {status}[/green]")
+    console.print(f"[green]OK: Updated job #{job_id} status to: {status}[/green]")
 
     if notes:
         console.print(f"[dim]Notes: {notes}[/dim]")
@@ -265,7 +265,7 @@ def stats():
 
     stats_data = db.get_stats()
 
-    console.print("\n[bold blue]📊 Database Statistics[/bold blue]\n")
+    console.print("\n[bold blue]Database Statistics[/bold blue]\n")
     console.print(f"Total Companies: [cyan]{stats_data['total_companies']}[/cyan]")
     console.print(f"Total Jobs: [cyan]{stats_data['total_jobs']}[/cyan]")
     console.print(f"New Jobs: [green]{stats_data['new_jobs']}[/green]")

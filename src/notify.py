@@ -98,6 +98,6 @@ class Notifier:
     def _print_single_job(self, job: Dict):
         """Print single job notification"""
         score = job.get('relevance_score', 0)
-        print(f"\n🎯 NEW HIGH-MATCH JOB [{score}/100]")
+        print(f"\n>>> NEW HIGH-MATCH JOB [{score}/100]")
         print(f"   {job['title']} at {job.get('company_name', 'Unknown')}")
         print(f"   {job.get('url', 'N/A')}\n")
