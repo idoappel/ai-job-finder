@@ -1,0 +1,108 @@
+# AI Job Finder Configuration Template
+# Copy this file to config.yaml and fill in your API keys
+
+# API Keys
+firecrawl_api_key: "YOUR_FIRECRAWL_API_KEY_HERE"  # Get from https://firecrawl.dev
+anthropic_api_key: "YOUR_ANTHROPIC_API_KEY_HERE"  # Get from https://console.anthropic.com (optional)
+
+# Job Search Criteria
+criteria:
+  # Target roles (will search for jobs matching these)
+  roles:
+    - "Product Manager"
+    - "Technical Product Manager"
+    - "Hardware Product Manager"
+    - "Platform Product Manager"
+    - "Venture Capital Analyst"
+    - "Venture Capital Associate"
+    - "Investment Associate"
+
+  # Industries to focus on
+  industries:
+    - "Robotics"
+    - "Autonomous Vehicles"
+    - "AI Hardware"
+    - "AI Chips"
+    - "Semiconductors"
+    - "Computer Vision"
+    - "Deep Tech"
+    - "Edge AI"
+    - "SoC Design"
+
+  # Preferred locations
+  locations:
+    - "London"
+    - "United Kingdom"
+    - "Remote"
+    - "Hybrid"
+
+  # Company stage preferences
+  company_stage:
+    - "Series A"
+    - "Series B"
+    - "Series C"
+    - "Growth Stage"
+    - "Public"
+    - "Established VC Fund"
+
+  # Keywords to boost relevance
+  keywords_boost:
+    - "VLSI"
+    - "RISC-V"
+    - "SoC"
+    - "Hardware"
+    - "Chip Design"
+    - "Technical Leadership"
+
+  # Keywords that disqualify a job
+  keywords_exclude:
+    - "Junior"
+    - "Entry Level"
+    - "Intern"
+    - "Consumer Social"
+    - "Gaming"
+    - "Pure Software"
+
+# Search queries for company discovery
+search_queries:
+  vc_firms:
+    - "London deep tech venture capital firms"
+    - "UK robotics AI hardware VC investors"
+    - "European semiconductor venture capital"
+
+  companies:
+    - "London robotics companies hiring"
+    - "UK AI chip startups"
+    - "autonomous vehicle companies UK"
+    - "semiconductor companies hiring product managers"
+
+# Optional: Custom company list (bypass discovery)
+custom_companies:
+  # Example:
+  # - name: "Wayve"
+  #   url: "https://wayve.ai/careers"
+  # - name: "Graphcore"
+  #   url: "https://www.graphcore.ai/jobs"
+
+# AI Matching Settings
+matching:
+  min_score: 70  # Only save jobs scoring 70+ out of 100
+  use_ai: true   # Set to false to skip AI analysis (faster but less accurate)
+
+# Notifications
+notifications:
+  enabled: false
+  email: ""  # Your email for job alerts
+  slack_webhook: ""  # Slack webhook URL (optional)
+
+# Scraping Settings
+scraping:
+  max_pages_per_site: 10  # Limit pages scraped per company (cost control)
+  retry_attempts: 3
+  timeout_seconds: 30
+
+# Scheduling
+schedule:
+  enabled: false
+  frequency: "daily"  # Options: daily, weekly, custom
+  time: "09:00"  # Time to run (24-hour format)
