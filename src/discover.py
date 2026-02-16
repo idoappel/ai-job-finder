@@ -124,12 +124,67 @@ class CompanyDiscovery:
                 'industry': 'Deep Tech VC',
                 'location': 'London',
                 'source': 'discovery'
+            },
+            {
+                'name': 'LocalGlobe',
+                'url': 'https://localglobe.vc',
+                'career_page_url': 'https://localglobe.vc/careers',
+                'company_type': 'vc_firm',
+                'industry': 'Deep Tech VC',
+                'location': 'London',
+                'source': 'discovery'
+            },
+            {
+                'name': 'Octopus Ventures',
+                'url': 'https://octopusventures.com',
+                'career_page_url': 'https://octopusventures.com/careers',
+                'company_type': 'vc_firm',
+                'industry': 'Deep Tech VC',
+                'location': 'London',
+                'source': 'discovery'
+            },
+            {
+                'name': 'Episode 1',
+                'url': 'https://episode1.com',
+                'career_page_url': 'https://episode1.com/careers',
+                'company_type': 'vc_firm',
+                'industry': 'Deep Tech VC',
+                'location': 'London',
+                'source': 'discovery'
+            },
+            {
+                'name': 'Amadeus Capital Partners',
+                'url': 'https://www.amadeuscapital.com',
+                'career_page_url': 'https://www.amadeuscapital.com/careers',
+                'company_type': 'vc_firm',
+                'industry': 'Deep Tech VC',
+                'location': 'Cambridge',
+                'source': 'discovery'
+            },
+            {
+                'name': 'Cambridge Innovation Capital',
+                'url': 'https://www.cicplc.co.uk',
+                'career_page_url': 'https://www.cicplc.co.uk/careers',
+                'company_type': 'vc_firm',
+                'industry': 'Deep Tech VC',
+                'location': 'Cambridge',
+                'source': 'discovery'
+            },
+            {
+                'name': 'Notion Capital',
+                'url': 'https://www.notion.vc',
+                'career_page_url': 'https://www.notion.vc/careers',
+                'company_type': 'vc_firm',
+                'industry': 'Technology VC',
+                'location': 'London',
+                'source': 'discovery'
             }
         ]
 
     def _get_example_companies(self) -> List[Dict]:
         """Return example deep tech companies (to be replaced with real search)"""
         return [
+            # Autonomous Vehicles / Robotics
             {
                 'name': 'Wayve',
                 'url': 'https://wayve.ai',
@@ -138,16 +193,6 @@ class CompanyDiscovery:
                 'industry': 'Autonomous Vehicles',
                 'location': 'London',
                 'funding_stage': 'Series C',
-                'source': 'discovery'
-            },
-            {
-                'name': 'Graphcore',
-                'url': 'https://www.graphcore.ai',
-                'career_page_url': 'https://www.graphcore.ai/jobs',
-                'company_type': 'company',
-                'industry': 'AI Hardware',
-                'location': 'Bristol, UK',
-                'funding_stage': 'Series E',
                 'source': 'discovery'
             },
             {
@@ -171,6 +216,27 @@ class CompanyDiscovery:
                 'source': 'discovery'
             },
             {
+                'name': 'Arrival',
+                'url': 'https://arrival.com',
+                'career_page_url': 'https://arrival.com/careers',
+                'company_type': 'company',
+                'industry': 'Electric Vehicles',
+                'location': 'London',
+                'funding_stage': 'Public',
+                'source': 'discovery'
+            },
+            # AI Hardware / Semiconductors
+            {
+                'name': 'Graphcore',
+                'url': 'https://www.graphcore.ai',
+                'career_page_url': 'https://www.graphcore.ai/jobs',
+                'company_type': 'company',
+                'industry': 'AI Hardware',
+                'location': 'Bristol, UK',
+                'funding_stage': 'Series E',
+                'source': 'discovery'
+            },
+            {
                 'name': 'Arm',
                 'url': 'https://www.arm.com',
                 'career_page_url': 'https://careers.arm.com',
@@ -181,13 +247,94 @@ class CompanyDiscovery:
                 'source': 'discovery'
             },
             {
-                'name': 'Cerebras',
-                'url': 'https://www.cerebras.net',
-                'career_page_url': 'https://www.cerebras.net/careers',
+                'name': 'PragmatIC Semiconductor',
+                'url': 'https://www.pragmaticsemi.com',
+                'career_page_url': 'https://www.pragmaticsemi.com/careers',
                 'company_type': 'company',
-                'industry': 'AI Hardware',
-                'location': 'Remote',
-                'funding_stage': 'Series F',
+                'industry': 'Semiconductors',
+                'location': 'Cambridge, UK',
+                'funding_stage': 'Series D',
+                'source': 'discovery'
+            },
+            {
+                'name': 'Sondrel',
+                'url': 'https://www.sondrel.com',
+                'career_page_url': 'https://www.sondrel.com/careers',
+                'company_type': 'company',
+                'industry': 'Semiconductors',
+                'location': 'London',
+                'funding_stage': 'Established',
+                'source': 'discovery'
+            },
+            # AI / Deep Learning Scale-ups
+            {
+                'name': 'DeepMind',
+                'url': 'https://www.deepmind.com',
+                'career_page_url': 'https://www.deepmind.com/careers',
+                'company_type': 'company',
+                'industry': 'AI Research',
+                'location': 'London',
+                'funding_stage': 'Google',
+                'source': 'discovery'
+            },
+            {
+                'name': 'BenevolentAI',
+                'url': 'https://www.benevolent.com',
+                'career_page_url': 'https://www.benevolent.com/careers',
+                'company_type': 'company',
+                'industry': 'AI Drug Discovery',
+                'location': 'London',
+                'funding_stage': 'Public',
+                'source': 'discovery'
+            },
+            {
+                'name': 'Faculty',
+                'url': 'https://faculty.ai',
+                'career_page_url': 'https://faculty.ai/careers',
+                'company_type': 'company',
+                'industry': 'AI Consultancy',
+                'location': 'London',
+                'funding_stage': 'Series B',
+                'source': 'discovery'
+            },
+            {
+                'name': 'Synthesia',
+                'url': 'https://www.synthesia.io',
+                'career_page_url': 'https://www.synthesia.io/careers',
+                'company_type': 'company',
+                'industry': 'AI Video',
+                'location': 'London',
+                'funding_stage': 'Series C',
+                'source': 'discovery'
+            },
+            {
+                'name': 'Tractable',
+                'url': 'https://tractable.ai',
+                'career_page_url': 'https://tractable.ai/careers',
+                'company_type': 'company',
+                'industry': 'AI for Insurance',
+                'location': 'London',
+                'funding_stage': 'Series E',
+                'source': 'discovery'
+            },
+            {
+                'name': 'Darktrace',
+                'url': 'https://www.darktrace.com',
+                'career_page_url': 'https://www.darktrace.com/careers',
+                'company_type': 'company',
+                'industry': 'AI Cybersecurity',
+                'location': 'Cambridge, UK',
+                'funding_stage': 'Public',
+                'source': 'discovery'
+            },
+            {
+                'name': 'Improbable',
+                'url': 'https://www.improbable.io',
+                'career_page_url': 'https://www.improbable.io/careers',
+                'company_type': 'company',
+                'industry': 'Metaverse/Simulation',
+                'location': 'London',
+                'funding_stage': 'Series B',
                 'source': 'discovery'
             }
         ]

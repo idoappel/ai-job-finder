@@ -17,6 +17,7 @@ from scrape import JobScraper
 from analyze import JobAnalyzer
 from notify import Notifier
 from export_sheets import export_to_csv, print_google_sheets_instructions
+from linkedin_search import LinkedInJobSearcher
 
 
 console = Console()
@@ -132,6 +133,98 @@ def discover():
     stats = db.get_stats()
     console.print(f"[cyan]Database stats:[/cyan]")
     console.print(f"  Total companies: {stats['total_companies']}")
+    console.print(f"  Total jobs: {stats['total_jobs']}")
+    console.print(f"  New jobs: {stats['new_jobs']}")
+    console.print(f"  Average score: {stats['avg_relevance_score']}/100\n")
+
+    db.close()
+
+
+@cli.command()
+@click.option('--location', default='London, UK', help='Job location to search')
+@click.option('--limit', default=50, help='Max results per query')
+def linkedin(location, limit):
+    """Search LinkedIn for PM/VC jobs in deep tech"""
+    config = load_config()
+
+    console.print("\n[bold blue]AI Job Finder - LinkedIn Search Mode[/bold blue]\n")
+
+    # Initialize components
+    db = JobDatabase()
+    scraper = JobScraper(config.get('firecrawl_api_key'), config)
+    analyzer = JobAnalyzer(config.get('anthropic_api_key'), config)
+    linkedin = LinkedInJobSearcher(scraper)
+
+    min_score = config.get('matching', {}).get('min_score', 70)
+
+    # Build search queries from config roles and industries
+    roles = config.get('criteria', {}).get('roles', [])
+    industries_keywords = ['deep tech', 'robotics', 'AI hardware', 'semiconductors', 'autonomous vehicles']
+
+    # Create search queries combining roles with industries
+    search_queries = []
+    for role in roles[:5]:  # Limit to first 5 roles to avoid too many searches
+        # Add role + "deep tech" query
+        search_queries.append(f"{role} deep tech")
+
+    console.print(f"[yellow]Searching LinkedIn for {len(search_queries)} queries in {location}...[/yellow]\n")
+
+    # Search LinkedIn
+    all_jobs = linkedin.search_multiple_queries(search_queries, location)
+
+    console.print(f"\n[green]Found {len(all_jobs)} total jobs from LinkedIn[/green]")
+    console.print(f"[yellow]Analyzing and scoring jobs...[/yellow]\n")
+
+    # Analyze and save jobs
+    new_jobs = []
+    for job in all_jobs:
+        # Check if job already exists
+        existing = db.get_jobs(url=job['url'])
+        if existing:
+            continue
+
+        # Create or get company
+        company_name = job.get('company', 'Unknown Company')
+        company_id = db.add_company(
+            name=company_name,
+            url=None,  # LinkedIn jobs don't provide company website
+            career_page_url=None,
+            industry='Unknown'  # Could extract from job description later
+        )
+
+        # Analyze job
+        analysis = analyzer.analyze_job(job, {'name': company_name})
+        relevance_score = analysis['score']
+
+        # Only save jobs above minimum score
+        if relevance_score >= min_score:
+            job_id = db.add_job(
+                company_id=company_id,
+                title=job['title'],
+                url=job['url'],
+                description=job.get('description', ''),
+                location=job.get('location', ''),
+                role_type=analysis['role_type'],
+                relevance_score=relevance_score,
+                ai_analysis=analysis  # Pass dict, not JSON string
+            )
+            new_jobs.append({**job, 'id': job_id, 'relevance_score': relevance_score, 'ai_analysis': analysis})
+
+    console.print(f"\n[green]OK: Found {len(new_jobs)} new high-quality matches (score >= {min_score})[/green]\n")
+
+    # Show new jobs
+    if new_jobs:
+        console.print("[bold]NEW JOB MATCHES - LinkedIn[/bold]\n")
+        for i, job in enumerate(new_jobs[:10], 1):  # Show top 10
+            score = job['relevance_score']
+            console.print(f"{i}. [{score}/100] {job['title']}")
+            console.print(f"   Company: {job.get('company', 'Unknown')}")
+            console.print(f"   Location: {job.get('location', 'Not specified')}")
+            console.print(f"   URL: {job['url']}\n")
+
+    # Show stats
+    stats = db.get_stats()
+    console.print(f"[cyan]Database stats:[/cyan]")
     console.print(f"  Total jobs: {stats['total_jobs']}")
     console.print(f"  New jobs: {stats['new_jobs']}")
     console.print(f"  Average score: {stats['avg_relevance_score']}/100\n")
