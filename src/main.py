@@ -18,6 +18,7 @@ from analyze import JobAnalyzer
 from notify import Notifier
 from export_sheets import export_to_csv, print_google_sheets_instructions
 from linkedin_search import LinkedInJobSearcher
+from export_companies import export_companies_directory
 
 
 console = Console()
@@ -399,6 +400,39 @@ def export(output, min_score, status):
         console.print("3. File > Import > Upload")
         console.print(f"4. Select: {output_path.name}")
         console.print("5. Import location: 'Replace spreadsheet'\n")
+
+    db.close()
+
+
+@cli.command()
+@click.option('--type', default=None, help='Filter by type (vc_firm, company)')
+@click.option('--industry', default=None, help='Filter by industry')
+@click.option('--output', default='output/companies_directory.csv', help='Output CSV filename')
+def companies(type, industry, output):
+    """Export discovered companies to directory format"""
+    config = load_config()
+    db = JobDatabase()
+
+    # Get all companies from database
+    all_companies = db.get_companies(company_type=type)
+
+    # Filter by industry if specified
+    if industry:
+        all_companies = [c for c in all_companies if industry.lower() in c.get('industry', '').lower()]
+
+    if not all_companies:
+        console.print("[yellow]No companies found[/yellow]")
+        db.close()
+        return
+
+    console.print(f"\n[cyan]Found {len(all_companies)} companies[/cyan]\n")
+
+    # Export to company directory CSV
+    output_path = export_companies_directory(all_companies, output)
+
+    if output_path:
+        console.print(f"\n[green]Successfully exported {len(all_companies)} companies![/green]")
+        console.print(f"[cyan]File location: {output_path.absolute()}[/cyan]\n")
 
     db.close()
 
